@@ -1,0 +1,24 @@
+# Ignore executables
+bin/*.exe
+
+# Ignore temporary/build files
+*.o
+*.obj
+*.tmp
+build/
+*.log
+
+# DLLs: ignore all by default, track only necessary SFML DLLs
+bin/*.dll
+!bin/sfml-audio-2.dll
+!bin/sfml-graphics-2.dll
+!bin/sfml-system-2.dll
+!bin/sfml-window-2.dll
+
+# IDE/editor files
+.vscode/
+.idea/
+*.sln
+*.vcxproj*
+*.user
+*.DS_Store
