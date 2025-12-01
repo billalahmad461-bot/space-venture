@@ -32,7 +32,8 @@ public:
     void upgradeShip(Spaceship* ship, int engineers);
     void manageCrew(Spaceship* ship);
     std::string getName() const;
-    std::vector<Resource*> getResources() const;
+    const std::vector<Resource*>& getResources() const;  // Changed to const ref
+    void addResource(Resource* resource);  // Added
     JobCentre* getJobCentre() const;
     UpgradeStation* getUpgradeStation() const;
     RefuellingStation* getRefuellingStation() const;

@@ -59,6 +59,9 @@ public:
     void setPosition(sf::Vector2f pos);
     void update();  // For minigame
     void shoot(std::vector<Bullet*>& bullets);
+    void setRegion(Region* region);  // Added
+    void setCurrentPlanet(Planet* planet);  // Added
+    void setVelocity(sf::Vector2f velocity);  // Added
 };
 
 #endif
