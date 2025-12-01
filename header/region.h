@@ -1,0 +1,27 @@
+#ifndef REGION_H
+#define REGION_H
+
+#include <string>
+#include <vector>
+#include "planet.h"
+#include "threat.h"
+
+class Region {
+private:
+    std::string _name;
+    std::vector<Planet*> _planets;
+    bool _lock;
+    int _danger_level;
+
+public:
+    Region(std::string name, bool lock, int danger_level);
+    void addPlanet(Planet* planet);
+    std::vector<Planet*> getPlanets() const;
+    bool isLocked() const;
+    void setLocked(bool lock);
+    int getDangerLevel() const;
+    void generateSky();  // Placeholder for background generation
+    std::vector<Threat*> generateThreats();  // Added for generating threats
+};
+
+#endif

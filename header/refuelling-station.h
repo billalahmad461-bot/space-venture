@@ -1,0 +1,18 @@
+#ifndef REFUELLING_STATION_H
+#define REFUELLING_STATION_H
+
+#include "planet.h"
+#include "spaceship.h"
+
+class RefuellingStation {
+private:
+    Planet* _h_planet;
+    const int FUEL_PRICE = 1;  // Added
+
+public:
+    RefuellingStation(Planet* planet);
+    void refuel(int amount, Spaceship* ship);
+    void upgradeFuel(Spaceship* ship, int engineers);
+};
+
+#endif
