@@ -11,5 +11,4 @@ void RefuellingStation::refuel(int amount, Spaceship* ship) {
 }
 
 void RefuellingStation::upgradeFuel(Spaceship* ship, int engineers) {
-    // Perhaps increase max fuel, assume not for first
 }

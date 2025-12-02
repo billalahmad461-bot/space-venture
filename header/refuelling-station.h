@@ -7,7 +7,7 @@
 class RefuellingStation {
 private:
     Planet* _h_planet;
-    const int FUEL_PRICE = 1;  // Added
+    const int FUEL_PRICE = 1;
 
 public:
     RefuellingStation(Planet* planet);

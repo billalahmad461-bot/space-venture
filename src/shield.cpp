@@ -12,7 +12,7 @@ void Shield::setCurrentHp(int hp) { _current_hp = hp; }
 
 void Shield::upgrade() {
     _lvl++;
-    _hp += 50;  // Assume upgrade increases max hp
+    _hp += 50;
     _current_hp = _hp;
 }
 

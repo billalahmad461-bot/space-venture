@@ -18,7 +18,6 @@ Planet::~Planet() {
 }
 
 void Planet::displayOptions() {
-    // UI handled in game
 }
 
 void Planet::refuel(int f, Spaceship* ship) {
@@ -30,7 +29,7 @@ void Planet::repairShip(Spaceship* ship, int engineers) {
 }
 
 void Planet::upgradeShip(Spaceship* ship, int engineers) {
-    _upgrade_station->upgradeWeapon(ship, engineers);  // Example, can choose
+    _upgrade_station->upgradeWeapon(ship, engineers);
 }
 
 void Planet::manageCrew(Spaceship* ship) {
@@ -39,7 +38,9 @@ void Planet::manageCrew(Spaceship* ship) {
 
 std::string Planet::getName() const { return _name; }
 
-std::vector<Resource*> Planet::getResources() const { return _resources; }
+const std::vector<Resource*>& Planet::getResources() const { return _resources; }
+
+void Planet::addResource(Resource* resource) { _resources.push_back(resource); }
 
 JobCentre* Planet::getJobCentre() const { return _job_centre; }
 

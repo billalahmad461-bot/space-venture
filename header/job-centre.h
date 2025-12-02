@@ -11,7 +11,7 @@ private:
 
 public:
     JobCentre(Planet* planet);
-    void displayAvailable();  // UI
+    void displayAvailable();
     void hireCrew(Crew* crew_member, Spaceship* ship);
     void upgradeCrew(char option, Spaceship* ship);
 };

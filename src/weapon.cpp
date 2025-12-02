@@ -8,5 +8,5 @@ int Weapon::getDmg() const { return _dmg; }
 
 void Weapon::upgrade() {
     _lvl++;
-    _dmg += 10;  // Assume upgrade increases damage
+    _dmg += 10;
 }

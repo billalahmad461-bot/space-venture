@@ -8,10 +8,10 @@ private:
     std::string _type;
     bool _lock;
     int _price;
-    int _amount;  // Added missing attribute for quantity
+    int _amount;
 
 public:
-    Resource(std::string type, bool lock, int price, int amount = 1);
+    Resource(std::string type, bool lock, int price, int amount = 0);
     std::string getType() const;
     bool isLocked() const;
     int getPrice() const;

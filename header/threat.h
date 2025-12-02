@@ -2,6 +2,8 @@
 #define THREAT_H
 
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include "bullet.h"
 
 class Threat {
 protected:
@@ -10,7 +12,7 @@ protected:
     int _lvl;
     sf::Vector2f _position;
     sf::Vector2f _velocity;
-    sf::Sprite _sprite;  // For rendering in minigame
+    sf::Sprite _sprite;
 
 public:
     Threat(int hp, int dmg, int lvl, sf::Vector2f pos, sf::Vector2f vel);
@@ -19,10 +21,10 @@ public:
     int getDmg() const;
     int getLvl() const;
     sf::Vector2f getPosition() const;
-    void update();
+    void update(float delta);
     void takeDamage(int dmg);
-    virtual void draw(sf::RenderWindow& window) = 0;
-    virtual void attack() = 0;  // Virtual for specific behavior
+    virtual void draw(sf::RenderWindow& window);
+    virtual void attack(std::vector<Bullet*>& bullets, sf::Vector2f target_pos) = 0;
     const sf::Sprite& getSprite() const;
 };
 

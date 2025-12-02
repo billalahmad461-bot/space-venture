@@ -12,14 +12,17 @@ private:
     std::vector<Threat*> _threats;
     std::vector<Bullet*> _bullets;
     sf::Sprite _background;
+    bool _done;
+    bool _survived;
 
 public:
     Minigame(Spaceship* ship, std::vector<Threat*> threats);
     ~Minigame();
-    bool run(sf::RenderWindow& window);  // Returns true if survived
-    void update();
+    void update(float delta);
     void draw(sf::RenderWindow& window);
     void handleInput(sf::Event& event);
+    bool isDone() const;
+    bool survived() const;
 };
 
 #endif

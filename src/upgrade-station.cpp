@@ -3,7 +3,6 @@
 UpgradeStation::UpgradeStation(Planet* planet) : _h_planet(planet) {}
 
 void UpgradeStation::upgradeWeapon(Spaceship* ship, int engineers) {
-    // Time = 10 / engineers, assume instant for first
     ship->getWeapon()->upgrade();
 }
 

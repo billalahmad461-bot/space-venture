@@ -1,60 +1,23 @@
-#include "../header/planet.h"
-#include <iostream>
+#include "../header/pirate.h"
 
-Planet::Planet(std::string name, Region* region)
-    : _name(name), _region(region) {
-    _repair_station = new RepairStation(this);
-    _upgrade_station = new UpgradeStation(this);
-    _refuelling_station = new RefuellingStation(this);
-    _job_centre = new JobCentre(this);
+Pirate::Pirate(int lvl, sf::Vector2f pos)
+    : Threat(lvl * 20, lvl * 5, lvl, pos, sf::Vector2f(0.f, 100.f)) {
+    sf::Texture tex;
+    tex.loadFromFile("asset/sprites/pirate.png");
+    _sprite.setTexture(tex);
+    _sprite.setPosition(pos);
 }
 
-Planet::~Planet() {
-    delete _repair_station;
-    delete _upgrade_station;
-    delete _refuelling_station;
-    delete _job_centre;
-    for (auto res : _resources) delete res;
+void Pirate::update(float delta) {
+    Threat::update(delta);
 }
 
-void Planet::displayOptions() {
-    // UI handled in game
+void Pirate::attack(std::vector<Bullet*>& bullets, sf::Vector2f target_pos) {
+    if (_shoot_clock.getElapsedTime().asSeconds() > 2.f) {
+        sf::Vector2f dir = target_pos - _position;
+        float length = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+        if (length > 0) dir /= length;
+        bullets.push_back(new Bullet(_position, dir * 200.f, _dmg, false));
+        _shoot_clock.restart();
+    }
 }
-
-void Planet::refuel(int f, Spaceship* ship) {
-    _refuelling_station->refuel(f, ship);
-}
-
-void Planet::repairShip(Spaceship* ship, int engineers) {
-    _repair_station->repairSpaceship(ship, engineers);
-}
-
-void Planet::upgradeShip(Spaceship* ship, int engineers) {
-    _upgrade_station->upgradeWeapon(ship, engineers);  // Example, can choose
-}
-
-void Planet::manageCrew(Spaceship* ship) {
-    _job_centre->displayAvailable();
-}
-
-std::string Planet::getName() const { return _name; }
-
-const std::vector<Resource*>& Planet::getResources() const { return _resources; }
-
-void Planet::addResource(Resource* resource) { _resources.push_back(resource); }
-
-JobCentre* Planet::getJobCentre() const { return _job_centre; }
-
-UpgradeStation* Planet::getUpgradeStation() const { return _upgrade_station; }
-
-RefuellingStation* Planet::getRefuellingStation() const { return _refuelling_station; }
-
-RepairStation* Planet::getRepairStation() const { return _repair_station; }
-
-void Planet::loadSprite(const std::string& filename) {
-    sf::Texture texture;
-    texture.loadFromFile(filename);
-    _sprite.setTexture(texture);
-}
-
-const sf::Sprite& Planet::getSprite() const { return _sprite; }

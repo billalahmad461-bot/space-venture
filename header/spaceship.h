@@ -24,9 +24,9 @@ private:
     int _fuel;
     int _money;
     std::vector<Resource*> _cargo;
-    sf::Sprite _sprite_top;  // For minigame
-    sf::Sprite _sprite_main;  // For cockpit
-    sf::Vector2f _position;  // For minigame
+    sf::Sprite _sprite_top;
+    sf::Sprite _sprite_main;
+    sf::Vector2f _position;
     sf::Vector2f _velocity;
 
 public:
@@ -35,9 +35,9 @@ public:
     void travel(Region* d_region, Planet* d_planet);
     void encounterPirates(Region* c_region);
     void encounterAsteroids(Region* c_region);
-    void collectResources(std::string resource, int miners);
+    void collectResources(std::string resource, int miners, int equipment_lvl);
     void manageResources();
-    void sellResource(std::string type, int amount);  // Added
+    void sellResource(std::string type, int amount);
     void addCrew(Crew* crew);
     int countMiners() const;
     int countEngineers() const;
@@ -52,16 +52,18 @@ public:
     int getMoney() const;
     void setMoney(int money);
     std::vector<Resource*> getCargo() const;
+    const std::vector<Crew*>& getCrew() const;
     void loadSprites();
     const sf::Sprite& getSpriteTop() const;
     const sf::Sprite& getSpriteMain() const;
     sf::Vector2f getPosition() const;
     void setPosition(sf::Vector2f pos);
-    void update();  // For minigame
+    void update(float delta);
     void shoot(std::vector<Bullet*>& bullets);
-    void setRegion(Region* region);  // Added
-    void setCurrentPlanet(Planet* planet);  // Added
-    void setVelocity(sf::Vector2f velocity);  // Added
+    void setRegion(Region* region);
+    void setCurrentPlanet(Planet* planet);
+    void setVelocity(sf::Vector2f velocity);
+    bool consumeResource(std::string type, int amount);
 };
 
 #endif

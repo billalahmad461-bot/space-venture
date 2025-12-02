@@ -11,7 +11,9 @@ private:
 
 public:
     Crew(int id, int lvl, std::string type);
-    virtual ~Crew() = default;  // Added to make polymorphic
+    virtual ~Crew() = default;
+    virtual int getPrice() const = 0;
+    virtual int getRate() const = 0;
     int getId() const;
     int getLvl() const;
     std::string getType() const;

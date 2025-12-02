@@ -15,13 +15,14 @@ private:
 
 public:
     Region(std::string name, bool lock, int danger_level);
+    ~Region();
     void addPlanet(Planet* planet);
     std::vector<Planet*> getPlanets() const;
     bool isLocked() const;
     void setLocked(bool lock);
     int getDangerLevel() const;
-    void generateSky();  // Placeholder for background generation
-    std::vector<Threat*> generateThreats();  // Added for generating threats
+    void generateSky();
+    std::vector<Threat*> generateThreats();
 };
 
 #endif

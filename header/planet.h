@@ -21,19 +21,19 @@ private:
     UpgradeStation* _upgrade_station;
     RefuellingStation* _refuelling_station;
     JobCentre* _job_centre;
-    sf::Sprite _sprite;  // Added for planet background
+    sf::Sprite _sprite;
 
 public:
     Planet(std::string name, Region* region);
     ~Planet();
-    void displayOptions();  // Will be handled in UI
+    void displayOptions();
     void refuel(int f, Spaceship* ship);
     void repairShip(Spaceship* ship, int engineers);
     void upgradeShip(Spaceship* ship, int engineers);
     void manageCrew(Spaceship* ship);
     std::string getName() const;
-    const std::vector<Resource*>& getResources() const;  // Changed to const ref
-    void addResource(Resource* resource);  // Added
+    const std::vector<Resource*>& getResources() const;
+    void addResource(Resource* resource);
     JobCentre* getJobCentre() const;
     UpgradeStation* getUpgradeStation() const;
     RefuellingStation* getRefuellingStation() const;

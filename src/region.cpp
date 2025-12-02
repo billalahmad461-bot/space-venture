@@ -1,12 +1,16 @@
 #include "../header/region.h"
-#include "../header/pirate.h"  // Added
-#include "../header/asteroid.h"  // Added
+#include "../header/pirate.h"
+#include "../header/asteroid.h"
 #include <cstdlib>
 #include <ctime>
 #include <SFML/Graphics.hpp>
 
 Region::Region(std::string name, bool lock, int danger_level)
     : _name(name), _lock(lock), _danger_level(danger_level) {}
+
+Region::~Region() {
+    for (auto p : _planets) delete p;
+}
 
 void Region::addPlanet(Planet* planet) {
     _planets.push_back(planet);
@@ -21,7 +25,6 @@ void Region::setLocked(bool lock) { _lock = lock; }
 int Region::getDangerLevel() const { return _danger_level; }
 
 void Region::generateSky() {
-    // Placeholder, perhaps set background
 }
 
 std::vector<Threat*> Region::generateThreats() {

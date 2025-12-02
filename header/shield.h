@@ -5,7 +5,7 @@ class Shield {
 private:
     int _lvl;
     int _hp;
-    int _current_hp;  // Added missing attribute for current health
+    int _current_hp;
 
 public:
     Shield(int lvl, int hp);

@@ -10,8 +10,8 @@ private:
 
 public:
     Engineer(int id, int lvl, int price, int work_rate);
-    int getPrice() const;
-    int getWorkRate() const;
+    int getPrice() const override;
+    int getRate() const override;
 };
 
 #endif

@@ -5,4 +5,4 @@ Engineer::Engineer(int id, int lvl, int price, int work_rate)
 
 int Engineer::getPrice() const { return _price; }
 
-int Engineer::getWorkRate() const { return _work_rate; }
+int Engineer::getRate() const { return _work_rate; }

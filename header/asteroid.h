@@ -6,8 +6,7 @@
 class Asteroid : public Threat {
 public:
     Asteroid(int lvl, sf::Vector2f pos);
-    void draw(sf::RenderWindow& window) override;
-    void attack() override;  // Asteroids collide only
+    void attack(std::vector<Bullet*>& bullets, sf::Vector2f target_pos) override;
 };
 
 #endif

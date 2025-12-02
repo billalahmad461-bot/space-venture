@@ -13,7 +13,7 @@ private:
 
 public:
     Bullet(sf::Vector2f pos, sf::Vector2f vel, int dmg, bool is_player);
-    void update();
+    void update(float delta);
     void draw(sf::RenderWindow& window);
     sf::Vector2f getPosition() const;
     int getDmg() const;
