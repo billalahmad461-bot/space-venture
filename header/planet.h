@@ -22,9 +22,10 @@ private:
     RefuellingStation* _refuelling_station;
     JobCentre* _job_centre;
     sf::Sprite _sprite;
+    int _req_upgrade_lvl;
 
 public:
-    Planet(std::string name, Region* region);
+    Planet(std::string name, Region* region, int req_upgrade_lvl = 1);
     ~Planet();
     void displayOptions();
     void refuel(int f, Spaceship* ship);
@@ -40,6 +41,9 @@ public:
     RepairStation* getRepairStation() const;
     void loadSprite(const std::string& filename);
     const sf::Sprite& getSprite() const;
+    bool hasStation(std::string type) const;
+    Resource* getUniqueResource() const;
+    Region* getRegion() const;
 };
 
 #endif

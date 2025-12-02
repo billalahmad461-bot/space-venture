@@ -10,3 +10,11 @@ int Crew::getLvl() const { return _lvl; }
 std::string Crew::getType() const { return _type; }
 
 void Crew::setLvl(int lvl) { _lvl = lvl; }
+
+void Crew::upgrade() {
+    _lvl++;
+}
+
+int Crew::getUpgradeCost() const {
+    return _lvl * 20;
+}

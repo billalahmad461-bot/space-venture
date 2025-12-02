@@ -13,6 +13,7 @@ public:
     void upgradeWeapon(Spaceship* ship, int engineers);
     void upgradeShield(Spaceship* ship, int engineers);
     void upgradeEquipment(Spaceship* ship, int engineers);
+    void upgradeMaxFuel(Spaceship* ship, int engineers);
 };
 
 #endif

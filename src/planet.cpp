@@ -1,8 +1,8 @@
 #include "../header/planet.h"
 #include <iostream>
 
-Planet::Planet(std::string name, Region* region)
-    : _name(name), _region(region) {
+Planet::Planet(std::string name, Region* region, int req_upgrade_lvl)
+    : _name(name), _region(region), _req_upgrade_lvl(req_upgrade_lvl) {
     _repair_station = new RepairStation(this);
     _upgrade_station = new UpgradeStation(this);
     _refuelling_station = new RefuellingStation(this);
@@ -21,11 +21,13 @@ void Planet::displayOptions() {
 }
 
 void Planet::refuel(int f, Spaceship* ship) {
-    _refuelling_station->refuel(f, ship);
+    _refuelling_station->refuel(std::min(f, ship->getMaxFuel() - ship->getFuel()), ship);
 }
 
 void Planet::repairShip(Spaceship* ship, int engineers) {
-    _repair_station->repairSpaceship(ship, engineers);
+    int repair_amt = engineers * 20; // Example
+    int current_hp = ship->getShield()->getCurrentHp();
+    ship->getShield()->setCurrentHp(std::min(current_hp + repair_amt, ship->getShield()->getHp()));
 }
 
 void Planet::upgradeShip(Spaceship* ship, int engineers) {
@@ -57,3 +59,15 @@ void Planet::loadSprite(const std::string& filename) {
 }
 
 const sf::Sprite& Planet::getSprite() const { return _sprite; }
+
+bool Planet::hasStation(std::string type) const {
+    // All have them per story
+    return true;
+}
+
+Resource* Planet::getUniqueResource() const {
+    if (!_resources.empty()) return _resources[0];
+    return nullptr;
+}
+
+Region* Planet::getRegion() const { return _region; }

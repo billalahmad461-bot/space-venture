@@ -21,7 +21,7 @@ public:
     int getDmg() const;
     int getLvl() const;
     sf::Vector2f getPosition() const;
-    void update(float delta);
+    virtual void update(float delta);
     void takeDamage(int dmg);
     virtual void draw(sf::RenderWindow& window);
     virtual void attack(std::vector<Bullet*>& bullets, sf::Vector2f target_pos) = 0;

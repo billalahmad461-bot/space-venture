@@ -5,4 +5,6 @@ Miner::Miner(int id, int lvl, int price, int mine_rate)
 
 int Miner::getPrice() const { return _price; }
 
-int Miner::getRate() const { return _mine_rate; }
+int Miner::getRate() const { return _mine_rate * getLvl(); }
+
+void Miner::setMineRate(int rate) { _mine_rate = rate; }

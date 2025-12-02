@@ -18,6 +18,8 @@ public:
     int getLvl() const;
     std::string getType() const;
     void setLvl(int lvl);
+    void upgrade();
+    int getUpgradeCost() const;
 };
 
 #endif

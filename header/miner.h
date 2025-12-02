@@ -12,6 +12,7 @@ public:
     Miner(int id, int lvl, int price, int mine_rate);
     int getPrice() const override;
     int getRate() const override;
+    void setMineRate(int rate);
 };
 
 #endif

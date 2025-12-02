@@ -12,6 +12,7 @@ public:
     Engineer(int id, int lvl, int price, int work_rate);
     int getPrice() const override;
     int getRate() const override;
+    void setWorkRate(int rate);
 };
 
 #endif

@@ -31,6 +31,7 @@ void Button::draw(sf::RenderWindow& window) {
 }
 
 bool Button::handleClick(sf::Vector2f mouse_pos) {
+    if (!_enabled) return false;
     if (_background_sprite.getGlobalBounds().contains(mouse_pos)) {
         _on_click();
         return true;
@@ -41,4 +42,9 @@ bool Button::handleClick(sf::Vector2f mouse_pos) {
 void Button::updateHover(sf::Vector2f mouse_pos) {
     _is_hover = _background_sprite.getGlobalBounds().contains(mouse_pos);
     _background_sprite.setColor(_is_hover ? sf::Color(200, 200, 255) : sf::Color::White);
+}
+
+void Button::setEnabled(bool enabled) {
+    _enabled = enabled;
+    _background_sprite.setColor(enabled ? sf::Color::White : sf::Color(150, 150, 150));
 }

@@ -11,6 +11,9 @@ Pirate::Pirate(int lvl, sf::Vector2f pos)
 
 void Pirate::update(float delta) {
     Threat::update(delta);
+    // Sinusoidal
+    _position.x += sin(_position.y / 50.f) * 50.f * delta; // Example
+    _sprite.setPosition(_position);
 }
 
 void Pirate::attack(std::vector<Bullet*>& bullets, sf::Vector2f target_pos) {

@@ -9,6 +9,7 @@
 #include "region.h"
 #include "planet.h"
 #include "resource.h"
+#include "equipment.h"
 #include <SFML/Graphics.hpp>
 
 class Spaceship {
@@ -17,16 +18,18 @@ private:
     std::vector<Crew*> _crew;
     Weapon* _weapon;
     Shield* _shield;
-    int _equipment_lvl;
+    Equipment* _equipment;
     Region* _region;
     Planet* _current_planet;
     int _fuel;
+    int _max_fuel;
     int _money;
     std::vector<Resource*> _cargo;
     sf::Sprite _sprite_top;
     sf::Sprite _sprite_main;
     sf::Vector2f _position;
     sf::Vector2f _velocity;
+    sf::Clock _shoot_clock;
 
 public:
     Spaceship(std::string name);
@@ -42,12 +45,12 @@ public:
     int countEngineers() const;
     Weapon* getWeapon() const;
     Shield* getShield() const;
-    int getEquipmentLvl() const;
-    void setEquipmentLvl(int lvl);
+    Equipment* getEquipment() const;
     Planet* getCurrentPlanet() const;
     Region* getRegion() const;
     int getFuel() const;
     void setFuel(int fuel);
+    int getMaxFuel() const;
     int getMoney() const;
     void setMoney(int money);
     std::vector<Resource*> getCargo() const;
@@ -63,6 +66,11 @@ public:
     void setCurrentPlanet(Planet* planet);
     void setVelocity(sf::Vector2f velocity);
     bool consumeResource(std::string type, int amount);
+    bool canUnlockRegion(Region* region);
+    void upgradeMaxFuel();
+    void takeDamage(int dmg);
+    int getTotalMiningRate() const;
+    int getTotalEngineeringRate() const;
 };
 
 #endif

@@ -23,6 +23,7 @@ public:
     void handleInput(sf::Event& event);
     bool isDone() const;
     bool survived() const;
+    void reset();
 };
 
 #endif

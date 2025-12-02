@@ -25,7 +25,13 @@ void Minigame::update(float delta) {
             _ship->getShield()->takeDamage(t->getDmg());
             t->takeDamage(100);
         }
+        // Remove off-screen threats
+        if (t->getPosition().y > 600) {
+            delete t;
+            t = nullptr;
+        }
     }
+    _threats.erase(std::remove_if(_threats.begin(), _threats.end(), [](Threat* t){ return t == nullptr || t->getHp() <= 0; }), _threats.end());
     _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(), [&](Bullet* b) {
         for (auto it = _threats.begin(); it != _threats.end(); ++it) {
             if (b->getSprite().getGlobalBounds().intersects((*it)->getSprite().getGlobalBounds()) && b->isPlayer()) {
@@ -39,7 +45,6 @@ void Minigame::update(float delta) {
         }
         return b->getPosition().y < 0 || b->getPosition().y > 600;
     }), _bullets.end());
-    _threats.erase(std::remove_if(_threats.begin(), _threats.end(), [](Threat* t) { return t->getHp() <= 0; }), _threats.end());
     if (_ship->getShield()->getCurrentHp() <= 0 || _threats.empty()) {
         _done = true;
         _survived = _ship->getShield()->getCurrentHp() > 0;
@@ -68,3 +73,9 @@ void Minigame::handleInput(sf::Event& event) {
 bool Minigame::isDone() const { return _done; }
 
 bool Minigame::survived() const { return _survived; }
+
+void Minigame::reset() {
+    _done = false;
+    _survived = false;
+    // Reinit threats if needed
+}
