@@ -34,20 +34,17 @@ void Game::init() {
     setupRegion();
     _ship = new Spaceship("Player Ship");
     _ship->setRegion(_starting_region);
-    _ship->setCurrentPlanet(_starting_region->getPlanets()[0]);  // Set to starting planet
+    _ship->setCurrentPlanet(_starting_region->getPlanets()[0]);
     updatePlanetScreen();
 }
 
 void Game::setupRegion() {
-    Planet* starting = new Planet("Starting Planet", _starting_region);
-    starting->loadSprite("asset/sprites/space.png");  // No resource for starting planet
     Planet* kepler_a = new Planet("Kepler-A", _starting_region);
     kepler_a->loadSprite("asset/sprites/kepler-a.png");
     kepler_a->addResource(new Resource("Elixir", false, 50));
     Planet* kepler_b = new Planet("Kepler-B", _starting_region);
     kepler_b->loadSprite("asset/sprites/kepler-b.png");
     kepler_b->addResource(new Resource("Mithrol", false, 100));
-    _starting_region->addPlanet(starting);
     _starting_region->addPlanet(kepler_a);
     _starting_region->addPlanet(kepler_b);
 }

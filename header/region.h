@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
+#include "threat.h"
 
-class Planet;  // Forward declaration to break circular include
+class Planet; // Forward declaration
 
 class Region {
 private:

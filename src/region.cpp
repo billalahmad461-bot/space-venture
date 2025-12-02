@@ -1,6 +1,7 @@
 #include "../header/region.h"
 #include "../header/pirate.h"
 #include "../header/asteroid.h"
+#include "../header/planet.h" // Added for complete Planet type in destructor
 #include <cstdlib>
 #include <ctime>
 #include <SFML/Graphics.hpp>
