@@ -1,4 +1,5 @@
 #include "../header/pirate.h"
+#include <cmath>  // Fixed missing include for std::sqrt
 
 Pirate::Pirate(int lvl, sf::Vector2f pos)
     : Threat(lvl * 20, lvl * 5, lvl, pos, sf::Vector2f(0.f, 100.f)) {

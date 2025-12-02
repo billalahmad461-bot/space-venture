@@ -34,20 +34,20 @@ void Game::init() {
     setupRegion();
     _ship = new Spaceship("Player Ship");
     _ship->setRegion(_starting_region);
-    _ship->setCurrentPlanet(_starting_region->getPlanets()[0]);
+    _ship->setCurrentPlanet(_starting_region->getPlanets()[0]);  // Set to starting planet
     updatePlanetScreen();
 }
 
 void Game::setupRegion() {
-    Planet* start = new Planet("Start", _starting_region);
-    start->loadSprite("asset/sprites/space.png");
+    Planet* starting = new Planet("Starting Planet", _starting_region);
+    starting->loadSprite("asset/sprites/space.png");  // No resource for starting planet
     Planet* kepler_a = new Planet("Kepler-A", _starting_region);
     kepler_a->loadSprite("asset/sprites/kepler-a.png");
     kepler_a->addResource(new Resource("Elixir", false, 50));
     Planet* kepler_b = new Planet("Kepler-B", _starting_region);
     kepler_b->loadSprite("asset/sprites/kepler-b.png");
     kepler_b->addResource(new Resource("Mithrol", false, 100));
-    _starting_region->addPlanet(start);
+    _starting_region->addPlanet(starting);
     _starting_region->addPlanet(kepler_a);
     _starting_region->addPlanet(kepler_b);
 }
@@ -141,10 +141,14 @@ void Game::updatePlanetScreen() {
     _buttons.clear();
     addButton(sf::Vector2f(10, 500), "Travel", [this]() {
         Planet* current = _ship->getCurrentPlanet();
-        Planet* next;
-        if (current == _starting_region->getPlanets()[0]) next = _starting_region->getPlanets()[1];
-        else if (current == _starting_region->getPlanets()[1]) next = _starting_region->getPlanets()[2];
-        else next = _starting_region->getPlanets()[0];
+        int index = 0;
+        for (size_t i = 0; i < _starting_region->getPlanets().size(); ++i) {
+            if (current == _starting_region->getPlanets()[i]) {
+                index = i;
+                break;
+            }
+        }
+        Planet* next = _starting_region->getPlanets()[(index + 1) % _starting_region->getPlanets().size()];
         _destination = next;
         _travel_timer = 0.f;
         _encountered = false;
