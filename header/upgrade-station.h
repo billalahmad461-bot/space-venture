@@ -1,8 +1,8 @@
 #ifndef UPGRADE_STATION_H
 #define UPGRADE_STATION_H
 
-#include "planet.h"
-#include "spaceship.h"
+class Planet;
+class Spaceship;
 
 class UpgradeStation {
 private:

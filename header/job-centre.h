@@ -1,9 +1,9 @@
 #ifndef JOB_CENTRE_H
 #define JOB_CENTRE_H
 
-#include "planet.h"
-#include "crew.h"
-#include "spaceship.h"
+class Planet;
+class Crew;
+class Spaceship;
 
 class JobCentre {
 private:

@@ -138,14 +138,7 @@ void Game::updatePlanetScreen() {
     _buttons.clear();
     addButton(sf::Vector2f(10, 500), "Travel", [this]() {
         Planet* current = _ship->getCurrentPlanet();
-        int index = 0;
-        for (size_t i = 0; i < _starting_region->getPlanets().size(); ++i) {
-            if (current == _starting_region->getPlanets()[i]) {
-                index = i;
-                break;
-            }
-        }
-        Planet* next = _starting_region->getPlanets()[(index + 1) % _starting_region->getPlanets().size()];
+        Planet* next = (current == _starting_region->getPlanets()[0]) ? _starting_region->getPlanets()[1] : _starting_region->getPlanets()[0];
         _destination = next;
         _travel_timer = 0.f;
         _encountered = false;

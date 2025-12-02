@@ -1,8 +1,8 @@
 #ifndef REPAIR_STATION_H
 #define REPAIR_STATION_H
 
-#include "planet.h"
-#include "spaceship.h"
+class Planet;
+class Spaceship;
 
 class RepairStation {
 private:

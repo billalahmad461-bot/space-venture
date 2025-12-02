@@ -1,8 +1,8 @@
 #ifndef REFUELLING_STATION_H
 #define REFUELLING_STATION_H
 
-#include "planet.h"
-#include "spaceship.h"
+class Planet;
+class Spaceship;
 
 class RefuellingStation {
 private:
