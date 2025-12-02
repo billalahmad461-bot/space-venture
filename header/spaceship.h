@@ -9,7 +9,6 @@
 #include "region.h"
 #include "planet.h"
 #include "resource.h"
-#include "bullet.h"
 #include <SFML/Graphics.hpp>
 
 class Spaceship {

@@ -1,4 +1,7 @@
 #include "../header/job-centre.h"
+#include "../header/planet.h"
+#include "../header/crew.h"
+#include "../header/spaceship.h"
 #include <iostream>
 
 JobCentre::JobCentre(Planet* planet) : _h_planet(planet) {}

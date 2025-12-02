@@ -1,4 +1,6 @@
 #include "../header/refuelling-station.h"
+#include "../header/planet.h"
+#include "../header/spaceship.h"
 
 RefuellingStation::RefuellingStation(Planet* planet) : _h_planet(planet) {}
 

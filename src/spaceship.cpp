@@ -1,6 +1,7 @@
 #include "../header/spaceship.h"
 #include <iostream>
-#include <sstream>
+#include <thread>
+#include <chrono>
 
 Spaceship::Spaceship(std::string name) : _name(name), _equipment_lvl(1), _fuel(100), _money(200) {
     _weapon = new Weapon(1, 10);
@@ -18,39 +19,44 @@ Spaceship::~Spaceship() {
 
 void Spaceship::travel(Region* d_region, Planet* d_planet) {
     if (d_region->isLocked()) return;
+    // Animatic: sleep 5s
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     _current_planet = d_planet;
     _region = d_region;
-    _fuel -= 20;
+    _fuel -= 20;  // Consume fuel
 }
 
 void Spaceship::encounterPirates(Region* c_region) {
+    // Trigger minigame with pirates
 }
 
 void Spaceship::encounterAsteroids(Region* c_region) {
+    // Trigger minigame with asteroids
 }
 
 void Spaceship::collectResources(std::string resource, int miners, int equipment_lvl) {
     if (miners <= 0) return;
-    bool found_res = false;
+    // Find resource on planet
     for (auto res : _current_planet->getResources()) {
         if (res->getType() == resource && (!res->isLocked() || equipment_lvl >= res->getPrice() / 10)) {
-            found_res = true;
-            int amount = miners * 5;
-            bool found_cargo = false;
+            int amount = miners * 5;  // Assume
+            // Add to cargo
+            bool found = false;
             for (auto c : _cargo) {
                 if (c->getType() == resource) {
                     c->addAmount(amount);
-                    found_cargo = true;
+                    found = true;
                     break;
                 }
             }
-            if (!found_cargo) _cargo.push_back(new Resource(resource, false, res->getPrice(), amount));
+            if (!found) _cargo.push_back(new Resource(resource, false, res->getPrice(), amount));
             break;
         }
     }
 }
 
 void Spaceship::manageResources() {
+    // UI for sell
 }
 
 void Spaceship::sellResource(std::string type, int amount) {
