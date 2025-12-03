@@ -8,6 +8,7 @@
 
 class Minigame {
 private:
+    sf::Texture _background_texture;
     Spaceship* _ship;
     std::vector<Threat*> _threats;
     std::vector<Bullet*> _bullets;

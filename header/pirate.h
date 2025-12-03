@@ -5,6 +5,7 @@
 
 class Pirate : public Threat {
 private:
+    sf::Texture _texture;
     sf::Clock _shoot_clock;
 
 public:

@@ -17,6 +17,7 @@ enum class GameState { PLANET, TRAVEL, MINIGAME, ACTION, JOB_CENTRE, TRAVEL_SELE
 
 class Game {
 private:
+    sf::Texture _space_texture;
     sf::RenderWindow _window;
     sf::Font _font;
     sf::Text _message;

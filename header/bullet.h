@@ -5,6 +5,7 @@
 
 class Bullet {
 private:
+    sf::Texture _texture;
     sf::Vector2f _position;
     sf::Vector2f _velocity;
     int _dmg;

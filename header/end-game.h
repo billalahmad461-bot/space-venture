@@ -5,6 +5,7 @@
 
 class EndGame {
 private:
+    sf::Texture _family_texture;
     sf::Text _win_message;
     sf::Sprite _family_sprite;
     sf::Font& _font;

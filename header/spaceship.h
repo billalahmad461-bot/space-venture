@@ -14,6 +14,8 @@
 
 class Spaceship {
 private:
+    sf::Texture _top_texture;
+    sf::Texture _main_texture;
     std::string _name;
     std::vector<Crew*> _crew;
     Weapon* _weapon;
@@ -37,7 +39,7 @@ public:
     void travel(Region* d_region, Planet* d_planet);
     void encounterPirates(Region* c_region);
     void encounterAsteroids(Region* c_region);
-    void collectResources(std::string resource, int miners, int equipment_lvl);
+    void collectResources(std::string resource, int equipment_lvl);
     void manageResources();
     void sellResource(std::string type, int amount);
     void addCrew(Crew* crew);

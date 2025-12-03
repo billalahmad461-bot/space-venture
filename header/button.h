@@ -7,8 +7,10 @@
 
 class Button {
 private:
+    sf::Texture _bg_texture;
     sf::Sprite _background_sprite;
     sf::Text _text;
+    sf::Texture _icon_texture;
     sf::Sprite _icon;
     std::function<void()> _on_click;
     bool _is_hover;

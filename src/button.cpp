@@ -1,22 +1,19 @@
 #include "../header/button.h"
 
-Button::Button(sf::Vector2f pos, sf::Vector2f size, std::string label, sf::Font& font, std::function<void()> on_click, std::string icon_path)
-    : _on_click(on_click), _is_hover(false) {
-    sf::Texture tex_bg;
-    tex_bg.loadFromFile("asset/sprites/button-normal.png");
-    _background_sprite.setTexture(tex_bg);
+Button::Button(sf::Vector2f pos, sf::Vector2f size, std::string label, sf::Font& font, std::function<void()> on_click, std::string icon_path) : _on_click(on_click), _is_hover(false), _enabled(true) {
+    _bg_texture.loadFromFile("asset/sprites/button-normal.png");
+    _background_sprite.setTexture(_bg_texture);
     _background_sprite.setPosition(pos);
-    _background_sprite.setScale(size.x / static_cast<float>(tex_bg.getSize().x), size.y / static_cast<float>(tex_bg.getSize().y));
+    _background_sprite.setScale(size.x / static_cast<float>(_bg_texture.getSize().x), size.y / static_cast<float>(_bg_texture.getSize().y));
     _text.setFont(font);
     _text.setString(label);
     _text.setCharacterSize(20);
     _text.setFillColor(sf::Color::White);
     _text.setOrigin(_text.getLocalBounds().width / 2.f, _text.getLocalBounds().height / 2.f);
     if (!icon_path.empty()) {
-        sf::Texture tex_icon;
-        tex_icon.loadFromFile("asset/sprites/" + icon_path);
-        _icon.setTexture(tex_icon);
-        _icon.setPosition(pos.x + 10, pos.y + (size.y - tex_icon.getSize().y * 0.5f) / 2);
+        _icon_texture.loadFromFile("asset/sprites/" + icon_path);
+        _icon.setTexture(_icon_texture);
+        _icon.setPosition(pos.x + 10, pos.y + (size.y - _icon_texture.getSize().y * 0.5f) / 2);
         _icon.setScale(0.5f, 0.5f);
         _text.setPosition(pos.x + size.x / 2 + 40, pos.y + size.y / 2);
     } else {

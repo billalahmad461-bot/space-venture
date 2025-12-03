@@ -1,8 +1,7 @@
 #include "../header/planet.h"
 #include <iostream>
 
-Planet::Planet(std::string name, Region* region, int req_upgrade_lvl)
-    : _name(name), _region(region), _req_upgrade_lvl(req_upgrade_lvl) {
+Planet::Planet(std::string name, Region* region, int req_upgrade_lvl) : _name(name), _region(region), _req_upgrade_lvl(req_upgrade_lvl) {
     _repair_station = new RepairStation(this);
     _upgrade_station = new UpgradeStation(this);
     _refuelling_station = new RefuellingStation(this);
@@ -25,9 +24,7 @@ void Planet::refuel(int f, Spaceship* ship) {
 }
 
 void Planet::repairShip(Spaceship* ship, int engineers) {
-    int repair_amt = engineers * 20; // Example
-    int current_hp = ship->getShield()->getCurrentHp();
-    ship->getShield()->setCurrentHp(std::min(current_hp + repair_amt, ship->getShield()->getHp()));
+    _repair_station->repairSpaceship(ship, engineers);
 }
 
 void Planet::upgradeShip(Spaceship* ship, int engineers) {
@@ -53,9 +50,8 @@ RefuellingStation* Planet::getRefuellingStation() const { return _refuelling_sta
 RepairStation* Planet::getRepairStation() const { return _repair_station; }
 
 void Planet::loadSprite(const std::string& filename) {
-    sf::Texture texture;
-    texture.loadFromFile(filename);
-    _sprite.setTexture(texture);
+    _texture.loadFromFile(filename);
+    _sprite.setTexture(_texture);
 }
 
 const sf::Sprite& Planet::getSprite() const { return _sprite; }

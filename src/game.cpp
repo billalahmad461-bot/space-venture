@@ -18,9 +18,8 @@ Game::Game() : _window(sf::VideoMode(800, 600), "Space Venture"), _state(GameSta
     _status.setCharacterSize(18);
     _status.setFillColor(sf::Color::White);
     _status.setPosition(600, 10);
-    sf::Texture space_tex;
-    space_tex.loadFromFile("asset/sprites/space.png");
-    _space_background.setTexture(space_tex);
+    _space_texture.loadFromFile("asset/sprites/space.png");
+    _space_background.setTexture(_space_texture);
     _message_log = new MessageLog(_font);
     _travel_anim = new TravelAnimatic();
     _end_screen = new EndGame(_font);
@@ -48,7 +47,7 @@ void Game::setupRegions() {
     _regions.push_back(new Region("Starting Region", false, 1, new RegionUnlockRequirement(1, 1)));
     Planet* start_p = new Planet("StartPlanet", _regions[0]);
     start_p->addResource(new Resource("Iron", 1, 20));
-    start_p->loadSprite("asset/sprites/start.png");
+    start_p->loadSprite("asset/sprites/space.png");
     _regions[0]->addPlanet(start_p);
     Planet* kepler_a = new Planet("Kepler-A", _regions[0]);
     kepler_a->addResource(new Resource("Elixir", 1, 50));
@@ -62,17 +61,17 @@ void Game::setupRegions() {
     _regions.push_back(new Region("Second Region", true, 2, new RegionUnlockRequirement(2, 2)));
     Planet* mid1 = new Planet("MidPlanet1", _regions[1]);
     mid1->addResource(new Resource("Adamantium", 2, 150));
-    mid1->loadSprite("asset/sprites/mid1.png");
+    mid1->loadSprite("asset/sprites/station-job-background.png");
     _regions[1]->addPlanet(mid1);
     Planet* mid2 = new Planet("MidPlanet2", _regions[1]);
     mid2->addResource(new Resource("Plasma", 2, 200));
-    mid2->loadSprite("asset/sprites/mid2.png");
+    mid2->loadSprite("asset/sprites/station-upgrade-background.png");
     _regions[1]->addPlanet(mid2);
 
     _regions.push_back(new Region("Final Region", true, 3, new RegionUnlockRequirement(3, 3)));
     Planet* home = new Planet("HomePlanet", _regions[2]);
     home->addResource(new Resource("Crystal", 3, 300));
-    home->loadSprite("asset/sprites/home.png");
+    home->loadSprite("asset/sprites/win-screen.png");
     _regions[2]->addPlanet(home);
 }
 
@@ -179,25 +178,25 @@ void Game::updatePlanetScreen() {
         int amount = 50;
         _ship->getCurrentPlanet()->refuel(amount, _ship);
         updateStatus();
-    }, "station-refuel.png");
+    }, "station-refuel-icon.png");
     addButton(sf::Vector2f(10, 190), "Repair", [this]() {
         int engineers = _ship->countEngineers();
         float damage = static_cast<float>(_ship->getShield()->getHp() - _ship->getShield()->getCurrentHp());
         if (engineers > 0 && damage > 0) {
-            _action_duration = damage / (engineers * 5.f);
+            _action_duration = damage / _ship->getTotalEngineeringRate();
             _action_timer = 0.f;
             _action_name = "Repairing";
             _state = GameState::ACTION;
         }
-    }, "station-repair.png");
+    }, "station-repair-icon.png");
     addButton(sf::Vector2f(10, 280), "Upgrades", [this]() {
         _state = GameState::UPGRADE_SELECT;
         updateUpgradeSelectScreen();
-    }, "station-upgrade.png");
+    }, "station-upgrade-icon.png");
     addButton(sf::Vector2f(10, 460), "Job Centre", [this]() {
         _state = GameState::JOB_CENTRE;
         updateJobScreen();
-    }, "station-job.png");
+    }, "station-job-icon.png");
     addButton(sf::Vector2f(400, 10), "Sell Resources", [this]() {
         for (auto c : _ship->getCargo()) {
             _ship->sellResource(c->getType(), c->getAmount());
@@ -273,6 +272,14 @@ void Game::updateTravelSelectScreen() {
             for (auto pl : reg->getPlanets()) {
                 if (pl != _ship->getCurrentPlanet()) {
                     addButton(sf::Vector2f(10, 10 + _buttons.size() * 90), pl->getName(), [this, pl, reg]() {
+                        if (reg->isLocked()) {
+                            if (_ship->canUnlockRegion(reg)) {
+                                reg->setLocked(false);
+                            } else {
+                                showMessage("Region locked! Upgrade more.");
+                                return;
+                            }
+                        }
                         int cost = (_ship->getRegion() == reg) ? 20 : 50;
                         if (_ship->getFuel() >= cost) {
                             _destination = pl;
@@ -308,7 +315,7 @@ void Game::updateUpgradeSelectScreen() {
         } else {
             showMessage("Can't upgrade!");
         }
-    }, "station-upgrade.png");
+    }, "station-upgrade-icon.png");
     addButton(sf::Vector2f(10, 100), "Upgrade Shield", [this]() {
         std::string res_req = "Mithrol";
         int cost = _ship->getShield()->getLvl() * 10;
@@ -320,7 +327,7 @@ void Game::updateUpgradeSelectScreen() {
         } else {
             showMessage("Can't upgrade!");
         }
-    }, "station-upgrade.png");
+    }, "station-upgrade-icon.png");
     addButton(sf::Vector2f(10, 190), "Upgrade Equipment", [this]() {
         std::string res_req = "Elixir";
         int cost = _ship->getEquipment()->getLvl() * 5;
@@ -332,7 +339,7 @@ void Game::updateUpgradeSelectScreen() {
         } else {
             showMessage("Can't upgrade!");
         }
-    }, "station-upgrade.png");
+    }, "station-upgrade-icon.png");
     addButton(sf::Vector2f(10, 280), "Upgrade Max Fuel", [this]() {
         std::string res_req = "Plasma";
         int cost = 20;
@@ -344,7 +351,7 @@ void Game::updateUpgradeSelectScreen() {
         } else {
             showMessage("Can't upgrade!");
         }
-    }, "station-upgrade.png");
+    }, "station-upgrade-icon.png");
     addButton(sf::Vector2f(10, 370), "Back", [this]() {
         _state = GameState::PLANET;
         updatePlanetScreen();
@@ -353,7 +360,7 @@ void Game::updateUpgradeSelectScreen() {
 
 void Game::handleActionComplete() {
     if (_action_name.find("Mining") == 0) {
-        _ship->collectResources(_action_resource, _ship->countMiners(), _ship->getEquipment()->getLvl());
+        _ship->collectResources(_action_resource, _ship->getEquipment()->getLvl());
     } else if (_action_name == "Repairing") {
         _ship->getCurrentPlanet()->repairShip(_ship, _ship->countEngineers());
     } else if (_action_name == "Upgrading Weapon") {

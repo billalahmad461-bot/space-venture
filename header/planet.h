@@ -14,6 +14,7 @@
 
 class Planet {
 private:
+    sf::Texture _texture;
     std::string _name;
     Region* _region;
     std::vector<Resource*> _resources;

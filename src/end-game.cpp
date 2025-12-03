@@ -7,9 +7,8 @@ EndGame::EndGame(sf::Font& font) : _font(font) {
     _win_message.setFillColor(sf::Color::Green);
     _win_message.setPosition(200, 250);
 
-    sf::Texture tex;
-    tex.loadFromFile("asset/sprites/family.png"); // Assume asset exists
-    _family_sprite.setTexture(tex);
+    _family_texture.loadFromFile("asset/sprites/family.png"); // Assume asset exists
+    _family_sprite.setTexture(_family_texture);
     _family_sprite.setPosition(300, 300);
 }
 

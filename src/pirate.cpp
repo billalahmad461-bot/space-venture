@@ -1,11 +1,9 @@
 #include "../header/pirate.h"
-#include <cmath>  // Fixed missing include for std::sqrt
+#include <cmath>
 
-Pirate::Pirate(int lvl, sf::Vector2f pos)
-    : Threat(lvl * 20, lvl * 5, lvl, pos, sf::Vector2f(0.f, 100.f)) {
-    sf::Texture tex;
-    tex.loadFromFile("asset/sprites/pirate.png");
-    _sprite.setTexture(tex);
+Pirate::Pirate(int lvl, sf::Vector2f pos) : Threat(lvl * 20, lvl * 5, lvl, pos, sf::Vector2f(0.f, 100.f)) {
+    _texture.loadFromFile("asset/sprites/pirate.png");
+    _sprite.setTexture(_texture);
     _sprite.setPosition(pos);
 }
 

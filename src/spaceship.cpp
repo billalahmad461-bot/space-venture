@@ -23,7 +23,6 @@ void Spaceship::travel(Region* d_region, Planet* d_planet) {
     if (d_region->isLocked()) return;
     int fuel_cost = (_region == d_region) ? 20 : 50;
     if (_fuel < fuel_cost) return;
-    std::this_thread::sleep_for(std::chrono::seconds(5));
     _current_planet = d_planet;
     _region = d_region;
     _fuel -= fuel_cost;
@@ -37,11 +36,10 @@ void Spaceship::encounterAsteroids(Region* c_region) {
     // Trigger minigame with asteroids
 }
 
-void Spaceship::collectResources(std::string resource, int miners, int equipment_lvl) {
-    if (miners <= 0) return;
+void Spaceship::collectResources(std::string resource, int equipment_lvl) {
     for (auto res : _current_planet->getResources()) {
         if (res->getType() == resource && equipment_lvl >= res->getReqEquipLvl()) {
-            int amount = miners * equipment_lvl * 5;
+            int amount = equipment_lvl * 20;
             bool found = false;
             for (auto c : _cargo) {
                 if (c->getType() == resource) {
@@ -117,11 +115,10 @@ std::vector<Resource*> Spaceship::getCargo() const { return _cargo; }
 const std::vector<Crew*>& Spaceship::getCrew() const { return _crew; }
 
 void Spaceship::loadSprites() {
-    sf::Texture tex_top, tex_main;
-    tex_top.loadFromFile("asset/sprites/spaceship-top.png");
-    tex_main.loadFromFile("asset/sprites/spaceship-main.png");
-    _sprite_top.setTexture(tex_top);
-    _sprite_main.setTexture(tex_main);
+    _top_texture.loadFromFile("asset/sprites/spaceship-top.png");
+    _main_texture.loadFromFile("asset/sprites/spaceship-main.png");
+    _sprite_top.setTexture(_top_texture);
+    _sprite_main.setTexture(_main_texture);
 }
 
 const sf::Sprite& Spaceship::getSpriteTop() const { return _sprite_top; }
@@ -138,7 +135,7 @@ void Spaceship::update(float delta) {
 }
 
 void Spaceship::shoot(std::vector<Bullet*>& bullets) {
-    if (_shoot_clock.getElapsedTime().asSeconds() > 0.5f) {
+    if (_shoot_clock.getElapsedTime().asSeconds() > 1.f / _weapon->getFireRate()) {
         bullets.push_back(new Bullet(_position, sf::Vector2f(0, -300.f), _weapon->getDmg(), true));
         _shoot_clock.restart();
     }
@@ -181,7 +178,7 @@ int Spaceship::getTotalMiningRate() const {
     for (auto c : _crew) {
         if (c->getType() == "miner") rate += c->getRate();
     }
-    return rate;
+    return rate ? rate : 1; // Avoid divide by zero
 }
 
 int Spaceship::getTotalEngineeringRate() const {
@@ -189,5 +186,5 @@ int Spaceship::getTotalEngineeringRate() const {
     for (auto c : _crew) {
         if (c->getType() == "engineer") rate += c->getRate();
     }
-    return rate;
+    return rate ? rate : 1; // Avoid divide by zero
 }

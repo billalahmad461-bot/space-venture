@@ -1,11 +1,9 @@
 #include "../header/minigame.h"
 #include <algorithm>
 
-Minigame::Minigame(Spaceship* ship, std::vector<Threat*> threats)
-    : _ship(ship), _threats(threats), _done(false), _survived(false) {
-    sf::Texture tex;
-    tex.loadFromFile("asset/sprites/space.png");
-    _background.setTexture(tex);
+Minigame::Minigame(Spaceship* ship, std::vector<Threat*> threats) : _ship(ship), _threats(threats), _done(false), _survived(false) {
+    _background_texture.loadFromFile("asset/sprites/space.png");
+    _background.setTexture(_background_texture);
     _ship->setPosition(sf::Vector2f(400, 500));
     _ship->setVelocity(sf::Vector2f(0, 0));
 }
@@ -17,34 +15,76 @@ Minigame::~Minigame() {
 
 void Minigame::update(float delta) {
     _ship->update(delta);
-    for (auto b : _bullets) b->update(delta);
-    for (auto t : _threats) {
+
+    // Update all threats and handle direct collisions with ship
+    for (Threat* t : _threats) {
         t->update(delta);
         t->attack(_bullets, _ship->getPosition());
         if (t->getSprite().getGlobalBounds().intersects(_ship->getSpriteTop().getGlobalBounds())) {
             _ship->getShield()->takeDamage(t->getDmg());
             t->takeDamage(100);
         }
-        // Remove off-screen threats
-        if (t->getPosition().y > 600) {
-            delete t;
-            t = nullptr;
-        }
     }
-    _threats.erase(std::remove_if(_threats.begin(), _threats.end(), [](Threat* t){ return t == nullptr || t->getHp() <= 0; }), _threats.end());
-    _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(), [&](Bullet* b) {
-        for (auto it = _threats.begin(); it != _threats.end(); ++it) {
-            if (b->getSprite().getGlobalBounds().intersects((*it)->getSprite().getGlobalBounds()) && b->isPlayer()) {
-                (*it)->takeDamage(b->getDmg());
-                return true;
+
+    // Update all bullets
+    for (Bullet* b : _bullets) {
+        b->update(delta);
+    }
+
+    // Collect bullets to remove
+    std::vector<Bullet*> bullets_to_remove;
+    for (Bullet* b : _bullets) {
+        if (b->getPosition().y < 0 || b->getPosition().y > 600) {
+            bullets_to_remove.push_back(b);
+            continue;
+        }
+
+        bool removed = false;
+        if (b->isPlayer()) {
+            for (Threat* t : _threats) {
+                if (b->getSprite().getGlobalBounds().intersects(t->getSprite().getGlobalBounds())) {
+                    t->takeDamage(b->getDmg());
+                    bullets_to_remove.push_back(b);
+                    removed = true;
+                    break;
+                }
+            }
+        } else {
+            if (b->getSprite().getGlobalBounds().intersects(_ship->getSpriteTop().getGlobalBounds())) {
+                _ship->getShield()->takeDamage(b->getDmg());
+                bullets_to_remove.push_back(b);
+                removed = true;
             }
         }
-        if (!b->isPlayer() && b->getSprite().getGlobalBounds().intersects(_ship->getSpriteTop().getGlobalBounds())) {
-            _ship->getShield()->takeDamage(b->getDmg());
-            return true;
+        if (removed) continue;
+    }
+
+    // Collect threats to remove
+    std::vector<Threat*> threats_to_remove;
+    for (Threat* t : _threats) {
+        if (t->getPosition().y > 600 || t->getHp() <= 0) {
+            threats_to_remove.push_back(t);
         }
-        return b->getPosition().y < 0 || b->getPosition().y > 600;
-    }), _bullets.end());
+    }
+
+    // Remove and delete bullets
+    for (Bullet* b : bullets_to_remove) {
+        auto it = std::find(_bullets.begin(), _bullets.end(), b);
+        if (it != _bullets.end()) {
+            _bullets.erase(it);
+        }
+        delete b;
+    }
+
+    // Remove and delete threats
+    for (Threat* t : threats_to_remove) {
+        auto it = std::find(_threats.begin(), _threats.end(), t);
+        if (it != _threats.end()) {
+            _threats.erase(it);
+        }
+        delete t;
+    }
+
     if (_ship->getShield()->getCurrentHp() <= 0 || _threats.empty()) {
         _done = true;
         _survived = _ship->getShield()->getCurrentHp() > 0;
@@ -70,9 +110,13 @@ void Minigame::handleInput(sf::Event& event) {
     _ship->setVelocity(vel);
 }
 
-bool Minigame::isDone() const { return _done; }
+bool Minigame::isDone() const {
+    return _done;
+}
 
-bool Minigame::survived() const { return _survived; }
+bool Minigame::survived() const {
+    return _survived;
+}
 
 void Minigame::reset() {
     _done = false;
