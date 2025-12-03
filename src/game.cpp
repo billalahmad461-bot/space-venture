@@ -7,7 +7,7 @@
 #include <ctime>
 #include <sstream>
 
-Game::Game() : _window(sf::VideoMode(800, 600), "Space Venture"), _state(GameState::PLANET), _minigame(nullptr), _travel_timer(0.f), _encountered(false), _destination(nullptr), _action_timer(0.f), _action_duration(0.f) {
+Game::Game() : _window(sf::VideoMode(900, 600), "Space Venture"), _state(GameState::PLANET), _minigame(nullptr), _travel_timer(0.f), _encountered(false), _destination(nullptr), _action_timer(0.f), _action_duration(0.f) {
     srand(static_cast<unsigned int>(time(nullptr)));
     _font.loadFromFile("asset/fonts/roboto.ttf");
     _message.setFont(_font);
