@@ -71,7 +71,7 @@ void Game::setupRegions() {
     _regions.push_back(new Region("Final Region", true, 3, new RegionUnlockRequirement(3, 3)));
     Planet* home = new Planet("HomePlanet", _regions[2]);
     home->addResource(new Resource("Crystal", 3, 300));
-    home->loadSprite("asset/sprites/backgrounds/win-screen.png");
+    home->loadSprite("asset/sprites/backgrounds/start-menu-background.png");
     _regions[2]->addPlanet(home);
 }
 
@@ -81,9 +81,6 @@ void Game::run() {
         sf::Event event;
         while (_window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) _window.close();
-            if (_state == GameState::MINIGAME) {
-                _minigame->handleInput(event);
-            }
             if (event.type == sf::Event::MouseButtonPressed && (_state == GameState::PLANET || _state == GameState::JOB_CENTRE || _state == GameState::TRAVEL_SELECT || _state == GameState::UPGRADE_SELECT)) {
                 sf::Vector2f mouse = _window.mapPixelToCoords(sf::Mouse::getPosition(_window));
                 for (auto& btn : _buttons) {

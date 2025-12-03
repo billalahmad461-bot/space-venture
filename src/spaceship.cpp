@@ -9,6 +9,7 @@ Spaceship::Spaceship(std::string name) : _name(name), _fuel(100), _max_fuel(100)
     _equipment = new Equipment(1);
     loadSprites();
     _position = sf::Vector2f(400, 500);
+    _sprite_top.setPosition(_position);
 }
 
 Spaceship::~Spaceship() {
@@ -136,7 +137,8 @@ void Spaceship::update(float delta) {
 
 void Spaceship::shoot(std::vector<Bullet*>& bullets) {
     if (_shoot_clock.getElapsedTime().asSeconds() > 1.f / _weapon->getFireRate()) {
-        bullets.push_back(new Bullet(_position, sf::Vector2f(0, -300.f), _weapon->getDmg(), true));
+        sf::Vector2f bullet_pos = _position + sf::Vector2f(_top_texture.getSize().x / 2.f, 0);
+        bullets.push_back(new Bullet(bullet_pos, sf::Vector2f(0, -300.f), _weapon->getDmg(), true));
         _shoot_clock.restart();
     }
 }

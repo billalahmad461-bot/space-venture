@@ -14,6 +14,13 @@ Minigame::~Minigame() {
 }
 
 void Minigame::update(float delta) {
+    sf::Vector2f vel(0, 0);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) vel.x -= 200.f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) vel.x += 200.f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) vel.y -= 200.f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) vel.y += 200.f;
+    _ship->setVelocity(vel);
+
     _ship->update(delta);
 
     // Update all threats and handle direct collisions with ship
@@ -102,12 +109,6 @@ void Minigame::handleInput(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Space) _ship->shoot(_bullets);
     }
-    sf::Vector2f vel(0, 0);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) vel.x -= 200.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) vel.x += 200.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) vel.y -= 200.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) vel.y += 200.f;
-    _ship->setVelocity(vel);
 }
 
 bool Minigame::isDone() const {
