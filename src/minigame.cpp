@@ -2,7 +2,7 @@
 #include <algorithm>
 
 Minigame::Minigame(Spaceship* ship, std::vector<Threat*> threats) : _ship(ship), _threats(threats), _done(false), _survived(false) {
-    _background_texture.loadFromFile("asset/sprites/space.png");
+    _background_texture.loadFromFile("asset/sprites/backgrounds/space.png");
     _background.setTexture(_background_texture);
     _ship->setPosition(sf::Vector2f(400, 500));
     _ship->setVelocity(sf::Vector2f(0, 0));

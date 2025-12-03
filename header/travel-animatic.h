@@ -8,6 +8,8 @@ private:
     sf::Sprite _anim_sprite;
     sf::Clock _anim_clock;
     sf::Texture _texture;
+    sf::Texture _ship_texture;
+    sf::Sprite _ship_sprite;
 
 public:
     TravelAnimatic();

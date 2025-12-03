@@ -18,7 +18,7 @@ Game::Game() : _window(sf::VideoMode(900, 600), "Space Venture"), _state(GameSta
     _status.setCharacterSize(18);
     _status.setFillColor(sf::Color::White);
     _status.setPosition(600, 10);
-    _space_texture.loadFromFile("asset/sprites/space.png");
+    _space_texture.loadFromFile("asset/sprites/backgrounds/space.png");
     _space_background.setTexture(_space_texture);
     _message_log = new MessageLog(_font);
     _travel_anim = new TravelAnimatic();
@@ -47,31 +47,31 @@ void Game::setupRegions() {
     _regions.push_back(new Region("Starting Region", false, 1, new RegionUnlockRequirement(1, 1)));
     Planet* start_p = new Planet("StartPlanet", _regions[0]);
     start_p->addResource(new Resource("Iron", 1, 20));
-    start_p->loadSprite("asset/sprites/space.png");
+    start_p->loadSprite("asset/sprites/backgrounds/space.png");
     _regions[0]->addPlanet(start_p);
     Planet* kepler_a = new Planet("Kepler-A", _regions[0]);
     kepler_a->addResource(new Resource("Elixir", 1, 50));
-    kepler_a->loadSprite("asset/sprites/kepler-a.png");
+    kepler_a->loadSprite("asset/sprites/planets/kepler-a.png");
     _regions[0]->addPlanet(kepler_a);
     Planet* kepler_b = new Planet("Kepler-B", _regions[0]);
     kepler_b->addResource(new Resource("Mithrol", 1, 100));
-    kepler_b->loadSprite("asset/sprites/kepler-b.png");
+    kepler_b->loadSprite("asset/sprites/planets/kepler-b.png");
     _regions[0]->addPlanet(kepler_b);
 
     _regions.push_back(new Region("Second Region", true, 2, new RegionUnlockRequirement(2, 2)));
     Planet* mid1 = new Planet("MidPlanet1", _regions[1]);
     mid1->addResource(new Resource("Adamantium", 2, 150));
-    mid1->loadSprite("asset/sprites/station-job-background.png");
+    mid1->loadSprite("asset/sprites/backgrounds/station-job-background.png");
     _regions[1]->addPlanet(mid1);
     Planet* mid2 = new Planet("MidPlanet2", _regions[1]);
     mid2->addResource(new Resource("Plasma", 2, 200));
-    mid2->loadSprite("asset/sprites/station-upgrade-background.png");
+    mid2->loadSprite("asset/sprites/backgrounds/station-upgrade-background.png");
     _regions[1]->addPlanet(mid2);
 
     _regions.push_back(new Region("Final Region", true, 3, new RegionUnlockRequirement(3, 3)));
     Planet* home = new Planet("HomePlanet", _regions[2]);
     home->addResource(new Resource("Crystal", 3, 300));
-    home->loadSprite("asset/sprites/win-screen.png");
+    home->loadSprite("asset/sprites/backgrounds/win-screen.png");
     _regions[2]->addPlanet(home);
 }
 
@@ -98,11 +98,13 @@ void Game::run() {
             _travel_anim->update(delta);
             if (_travel_timer > 5.f) {
                 _ship->travel(_destination->getRegion(), _destination);
+                _message_log->addMessage("Reached " + _destination->getName());
                 _state = GameState::PLANET;
                 updatePlanetScreen();
             }
             if (!_encountered && _travel_timer > 2.f && (rand() % 100 < _ship->getRegion()->getDangerLevel() * 10)) {
                 _encountered = true;
+                _message_log->addMessage("Enemy Encounter!");
                 _minigame = new Minigame(_ship, _ship->getRegion()->generateThreats());
                 _state = GameState::MINIGAME;
             }

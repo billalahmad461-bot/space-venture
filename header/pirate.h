@@ -7,6 +7,7 @@ class Pirate : public Threat {
 private:
     sf::Texture _texture;
     sf::Clock _shoot_clock;
+    float _direction;
 
 public:
     Pirate(int lvl, sf::Vector2f pos);

@@ -115,8 +115,8 @@ std::vector<Resource*> Spaceship::getCargo() const { return _cargo; }
 const std::vector<Crew*>& Spaceship::getCrew() const { return _crew; }
 
 void Spaceship::loadSprites() {
-    _top_texture.loadFromFile("asset/sprites/spaceship-top.png");
-    _main_texture.loadFromFile("asset/sprites/spaceship-main.png");
+    _top_texture.loadFromFile("asset/sprites/spaceship/spaceship-top.png");
+    _main_texture.loadFromFile("asset/sprites/spaceship/spaceship-main.png");
     _sprite_top.setTexture(_top_texture);
     _sprite_main.setTexture(_main_texture);
 }
