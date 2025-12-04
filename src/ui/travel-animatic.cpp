@@ -5,7 +5,7 @@ TravelAnimatic::TravelAnimatic() {
     _anim_sprite.setPosition(0, 0);
     _ship_texture.loadFromFile("asset/sprites/spaceship/spaceship-main.png");
     _ship_sprite.setTexture(_ship_texture);
-    _ship_sprite.setPosition((900.f - _ship_texture.getSize().x) / 2.f, (600.f - _ship_texture.getSize().y) / 2.f);
+    _ship_sprite.setPosition(0, 0);
 }
 void TravelAnimatic::update(float delta) {
 }

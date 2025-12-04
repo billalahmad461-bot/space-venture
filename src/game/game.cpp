@@ -8,7 +8,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-Game::Game() : _window(sf::VideoMode(900, 600), "Space Venture"), _state(GameState::START_MENU), _minigame(nullptr), _travel_timer(0.f), _encountered(false), _destination(nullptr), _action_timer(0.f), _action_duration(0.f) {
+Game::Game() : _window(sf::VideoMode(900, 600), "Space Venture"), _state(GameState::START_MENU), _minigame(nullptr), _travel_timer(0.f), _encountered(false), _destination(nullptr), _previous_planet(nullptr), _action_timer(0.f), _action_duration(0.f) {
     srand(static_cast<unsigned int>(time(nullptr)));
     _font.loadFromFile("asset/fonts/roboto.ttf");
     _message.setFont(_font);
@@ -143,29 +143,17 @@ void Game::run() {
                         break;
                     }
                 }
-                if (!handled) {
+                if (!handled && (_state == GameState::PLANET || _state == GameState::ACTION || _state == GameState::JOB_CENTRE || _state == GameState::UPGRADE_SELECT || _state == GameState::TRAVEL_SELECT || _state == GameState::CARGO_MENU || _state == GameState::CREW_MINER || _state == GameState::CREW_ENGINEER)) {
                     if (_money_spr.getGlobalBounds().contains(mouse)) {
                         _message_log->addMessage("Money: " + std::to_string(_ship->getMoney()));
                     } else if (_miner_spr.getGlobalBounds().contains(mouse)) {
-                        std::stringstream ss;
-                        ss << "Miners:\n";
-                        int i = 1;
-                        for (auto c : _ship->getCrew()) {
-                            if (c->getType() == "miner") {
-                                ss << i++ << ". ID: " << c->getId() << " Level: " << c->getLvl() << "\n";
-                            }
-                        }
-                        _message_log->addMessage(ss.str());
+                        _crew_type = "miner";
+                        _state = GameState::CREW_MINER;
+                        updateCrewScreen("miner");
                     } else if (_engineer_spr.getGlobalBounds().contains(mouse)) {
-                        std::stringstream ss;
-                        ss << "Engineers:\n";
-                        int i = 1;
-                        for (auto c : _ship->getCrew()) {
-                            if (c->getType() == "engineer") {
-                                ss << i++ << ". ID: " << c->getId() << " Level: " << c->getLvl() << "\n";
-                            }
-                        }
-                        _message_log->addMessage(ss.str());
+                        _crew_type = "engineer";
+                        _state = GameState::CREW_ENGINEER;
+                        updateCrewScreen("engineer");
                     } else if (_cargo_spr.getGlobalBounds().contains(mouse)) {
                         _state = GameState::CARGO_MENU;
                         updateCargoScreen();
@@ -207,7 +195,11 @@ void Game::run() {
                 if (_minigame->survived()) {
                     _state = GameState::TRAVEL;
                 } else {
-                    _state = GameState::LOSE;
+                    _ship->setCurrentPlanet(_previous_planet);
+                    _ship->setMoney(std::max(0, _ship->getMoney() - 50));
+                    _message_log->addMessage("Ship damaged! Returned to previous planet. Lost 50 money for repairs.");
+                    _state = GameState::PLANET;
+                    updatePlanetScreen();
                 }
                 delete _minigame;
                 _minigame = nullptr;
@@ -246,6 +238,10 @@ void Game::run() {
                 _message.setString(_action_name + " in progress...");
                 _window.draw(_message);
             }
+            if (_state == GameState::CARGO_MENU) {
+                for (auto& spr : _resource_sprs) _window.draw(spr);
+            }
+            for (auto& txt : _req_texts) _window.draw(txt);
             _message_log->draw(_window);
         }
         if (_state != GameState::START_MENU && _state != GameState::WIN && _state != GameState::LOSE) {
@@ -286,12 +282,13 @@ void Game::updatePlanetScreen() {
     _message.setString("You are on " + _ship->getCurrentPlanet()->getName());
     _buttons.clear();
     addButton(sf::Vector2f(10, 500), "Travel", [this]() {
+        _previous_planet = _ship->getCurrentPlanet();
         _state = GameState::TRAVEL_SELECT;
         updateTravelSelectScreen();
     });
     bool has_miners = _ship->countMiners() > 0;
     Button& collect_btn = _buttons.emplace_back(sf::Vector2f(10, 10), sf::Vector2f(300,80), "Collect Resources", _font, [this]() {
-        _action_duration = 60.f / _ship->getTotalMiningRate();
+        _action_duration = 300.f / _ship->getTotalMiningRate();
         _action_name = "Mining";
         _action_resource = _ship->getCurrentPlanet()->getUniqueResource()->getType();
         _state = GameState::ACTION;
@@ -302,21 +299,21 @@ void Game::updatePlanetScreen() {
         _ship->getCurrentPlanet()->refuel(amount, _ship);
         updateStatus();
     }, "station-refuel-icon.png");
-    addButton(sf::Vector2f(10, 190), "Repair", [this]() {
+    addButton(sf::Vector2f(10, 210), "Repair", [this]() {
         int engineers = _ship->countEngineers();
         float damage = static_cast<float>(_ship->getShield()->getHp() - _ship->getShield()->getCurrentHp());
         if (engineers > 0 && damage > 0) {
-            _action_duration = damage / _ship->getTotalEngineeringRate();
+            _action_duration = damage / _ship->getTotalEngineeringRate() * 5.f;
             _action_timer = 0.f;
             _action_name = "Repairing";
             _state = GameState::ACTION;
         }
     }, "station-repair-icon.png");
-    addButton(sf::Vector2f(10, 280), "Upgrades", [this]() {
+    addButton(sf::Vector2f(10, 320), "Upgrades", [this]() {
         _state = GameState::UPGRADE_SELECT;
         updateUpgradeSelectScreen();
     }, "station-upgrade-icon.png");
-    addButton(sf::Vector2f(10, 460), "Job Centre", [this]() {
+    addButton(sf::Vector2f(10, 430), "Job Centre", [this]() {
         _state = GameState::JOB_CENTRE;
         updateJobScreen();
     }, "station-job-icon.png");
@@ -334,19 +331,28 @@ void Game::updateJobScreen() {
     _background.setTexture(bg_tex);
     _message.setString("Job Centre");
     _buttons.clear();
+    _req_texts.clear();
     addButton(sf::Vector2f(10, 10), "Hire Miner", [this]() {
         int id = static_cast<int>(_ship->getCrew().size()) + 1;
         Miner* m = new Miner(id, 1, 50, 5);
         _ship->getCurrentPlanet()->getJobCentre()->hireCrew(m, _ship);
         updateStatus();
     });
+    sf::Text req;
+    req.setFont(_font);
+    req.setString("Cost: 50 money");
+    req.setPosition(320, 10);
+    _req_texts.push_back(req);
     addButton(sf::Vector2f(10, 100), "Hire Engineer", [this]() {
         int id = static_cast<int>(_ship->getCrew().size()) + 1;
         Engineer* e = new Engineer(id, 1, 50, 5);
         _ship->getCurrentPlanet()->getJobCentre()->hireCrew(e, _ship);
         updateStatus();
     });
-    addButton(sf::Vector2f(10, 200), "Upgrade Miner", [this]() {
+    req.setString("Cost: 50 money");
+    req.setPosition(320, 100);
+    _req_texts.push_back(req);
+    addButton(sf::Vector2f(10, 190), "Upgrade Miner", [this]() {
         for (auto c : _ship->getCrew()) {
             if (c->getType() == "miner") {
                 _ship->getCurrentPlanet()->getJobCentre()->upgradeCrew(c->getId(), _ship);
@@ -355,7 +361,10 @@ void Game::updateJobScreen() {
         }
         updateStatus();
     });
-    addButton(sf::Vector2f(10, 290), "Upgrade Engineer", [this]() {
+    req.setString("Cost: 20 * lvl money");
+    req.setPosition(320, 190);
+    _req_texts.push_back(req);
+    addButton(sf::Vector2f(10, 280), "Upgrade Engineer", [this]() {
         for (auto c : _ship->getCrew()) {
             if (c->getType() == "engineer") {
                 _ship->getCurrentPlanet()->getJobCentre()->upgradeCrew(c->getId(), _ship);
@@ -364,7 +373,10 @@ void Game::updateJobScreen() {
         }
         updateStatus();
     });
-    addButton(sf::Vector2f(10, 380), "Back", [this]() {
+    req.setString("Cost: 20 * lvl money");
+    req.setPosition(320, 280);
+    _req_texts.push_back(req);
+    addButton(sf::Vector2f(10, 370), "Back", [this]() {
         _state = GameState::PLANET;
         updatePlanetScreen();
     });
@@ -375,54 +387,69 @@ void Game::updateUpgradeSelectScreen() {
     bg_tex.loadFromFile("asset/sprites/backgrounds/station-upgrade-background.png");
     _background.setTexture(bg_tex);
     _buttons.clear();
+    _req_texts.clear();
     addButton(sf::Vector2f(10, 10), "Upgrade Weapon", [this]() {
         std::string res_req = "Elixir";
         int cost = _ship->getWeapon()->getLvl() * 10;
         int engineers = _ship->countEngineers();
         if (_ship->consumeResource(res_req, cost) && engineers > 0) {
-            _action_duration = 20.f / _ship->getTotalEngineeringRate();
+            _action_duration = 100.f / _ship->getTotalEngineeringRate();
             _action_name = "Upgrading Weapon";
             _state = GameState::ACTION;
         } else {
             showMessage("Can't upgrade!");
         }
     }, "station-upgrade-icon.png");
+    sf::Text req;
+    req.setFont(_font);
+    req.setString("Req: Elixir " + std::to_string(_ship->getWeapon()->getLvl() * 10) + ", 1+ Engineer");
+    req.setPosition(320, 10);
+    _req_texts.push_back(req);
     addButton(sf::Vector2f(10, 100), "Upgrade Shield", [this]() {
         std::string res_req = "Mithrol";
         int cost = _ship->getShield()->getLvl() * 10;
         int engineers = _ship->countEngineers();
         if (_ship->consumeResource(res_req, cost) && engineers > 0) {
-            _action_duration = 20.f / _ship->getTotalEngineeringRate();
+            _action_duration = 100.f / _ship->getTotalEngineeringRate();
             _action_name = "Upgrading Shield";
             _state = GameState::ACTION;
         } else {
             showMessage("Can't upgrade!");
         }
     }, "station-upgrade-icon.png");
+    req.setString("Req: Mithrol " + std::to_string(_ship->getShield()->getLvl() * 10) + ", 1+ Engineer");
+    req.setPosition(320, 100);
+    _req_texts.push_back(req);
     addButton(sf::Vector2f(10, 190), "Upgrade Equipment", [this]() {
         std::string res_req = "Elixir";
         int cost = _ship->getEquipment()->getLvl() * 5;
         int engineers = _ship->countEngineers();
         if (_ship->consumeResource(res_req, cost) && engineers > 0) {
-            _action_duration = 20.f / _ship->getTotalEngineeringRate();
+            _action_duration = 100.f / _ship->getTotalEngineeringRate();
             _action_name = "Upgrading Equipment";
             _state = GameState::ACTION;
         } else {
             showMessage("Can't upgrade!");
         }
     }, "station-upgrade-icon.png");
+    req.setString("Req: Elixir " + std::to_string(_ship->getEquipment()->getLvl() * 5) + ", 1+ Engineer");
+    req.setPosition(320, 190);
+    _req_texts.push_back(req);
     addButton(sf::Vector2f(10, 280), "Upgrade Max Fuel", [this]() {
         std::string res_req = "Uru";
         int cost = 20;
         int engineers = _ship->countEngineers();
         if (_ship->consumeResource(res_req, cost) && engineers > 0) {
-            _action_duration = 20.f / _ship->getTotalEngineeringRate();
+            _action_duration = 100.f / _ship->getTotalEngineeringRate();
             _action_name = "Upgrading Max Fuel";
             _state = GameState::ACTION;
         } else {
             showMessage("Can't upgrade!");
         }
     }, "station-upgrade-icon.png");
+    req.setString("Req: Uru 20, 1+ Engineer");
+    req.setPosition(320, 280);
+    _req_texts.push_back(req);
     addButton(sf::Vector2f(10, 370), "Back", [this]() {
         _state = GameState::PLANET;
         updatePlanetScreen();
@@ -430,19 +457,50 @@ void Game::updateUpgradeSelectScreen() {
 }
 void Game::updateCargoScreen() {
     _buttons.clear();
+    _resource_sprs.clear();
+    _resource_texs.clear();
     _message.setString("Cargo Management");
     int y = 10;
     for (auto r : _ship->getCargo()) {
         std::string label = r->getType() + ": " + std::to_string(r->getAmount()) + " (Value: " + std::to_string(r->getPrice()) + ")";
-        addButton(sf::Vector2f(10, y), label, [](){});
-        addButton(sf::Vector2f(320, y), "Sell", [this, r]() {
+        addButton(sf::Vector2f(150, y), label, [](){});
+        addButton(sf::Vector2f(450, y), "Sell 1", [this, r]() {
             _ship->sellResource(r->getType(), 1);
             updateStatus();
             updateCargoScreen();
         });
+        std::string res_path = "asset/sprites/resources/" + r->getType() + ".png";
+        sf::Texture tex;
+        tex.loadFromFile(res_path);
+        _resource_texs.push_back(tex);
+        sf::Sprite spr(_resource_texs.back());
+        spr.setPosition(10, y);
+        _resource_sprs.push_back(spr);
         y += 90;
     }
     addButton(sf::Vector2f(10, y), "Back", [this]() {
+        _state = GameState::PLANET;
+        updatePlanetScreen();
+    });
+}
+void Game::updateCrewScreen(std::string type) {
+    sf::Texture bg_tex;
+    bg_tex.loadFromFile("asset/sprites/backgrounds/start-menu-background.png");
+    _background.setTexture(bg_tex);
+    _buttons.clear();
+    _message.setString(type + "s:");
+    std::stringstream ss;
+    int i = 1;
+    for (auto c : _ship->getCrew()) {
+        if (c->getType() == type) {
+            ss << i++ << ". ID: " << c->getId() << " Level: " << c->getLvl() << "\n";
+        }
+    }
+    sf::Text details(ss.str(), _font, 18);
+    details.setPosition(10, 100);
+    _req_texts.clear();
+    _req_texts.push_back(details);
+    addButton(sf::Vector2f(10, 500), "Back", [this]() {
         _state = GameState::PLANET;
         updatePlanetScreen();
     });
@@ -473,7 +531,8 @@ void Game::updateStatus() {
     _equipment_txt.setString("Lvl " + std::to_string(_ship->getEquipment()->getLvl()));
 }
 void Game::addButton(sf::Vector2f pos, std::string label, std::function<void()> on_click, std::string icon) {
-    _buttons.emplace_back(pos, sf::Vector2f(300,80), label, _font, on_click, icon);
+    sf::Vector2f size = icon.empty() ? sf::Vector2f(300,80) : sf::Vector2f(100,100);
+    _buttons.emplace_back(pos, size, label, _font, on_click, icon);
 }
 void Game::updateTravelSelectScreen() {
     _buttons.clear();

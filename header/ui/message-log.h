@@ -6,6 +6,7 @@
 class MessageLog {
 private:
     std::vector<sf::Text> _logs;
+    std::vector<sf::Clock> _clocks;
     sf::Font& _font;
     int _max_logs;
 public:

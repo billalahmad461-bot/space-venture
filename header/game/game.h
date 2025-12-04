@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 #include <sstream>
-enum class GameState { START_MENU, PLANET, TRAVEL, MINIGAME, ACTION, JOB_CENTRE, TRAVEL_SELECT, UPGRADE_SELECT, WIN, LOSE, CARGO_MENU };
+enum class GameState { START_MENU, PLANET, TRAVEL, MINIGAME, ACTION, JOB_CENTRE, TRAVEL_SELECT, UPGRADE_SELECT, WIN, LOSE, CARGO_MENU, CREW_MINER, CREW_ENGINEER };
 class Game {
 private:
     sf::Texture _space_texture;
@@ -31,6 +31,7 @@ private:
     float _travel_timer;
     bool _encountered;
     Planet* _destination;
+    Planet* _previous_planet;
     float _action_timer;
     float _action_duration;
     std::string _action_name;
@@ -65,12 +66,17 @@ private:
     sf::Text _equipment_txt;
     sf::Texture _start_bg_tex;
     sf::Sprite _start_bg_spr;
+    std::vector<sf::Sprite> _resource_sprs;
+    std::vector<sf::Texture> _resource_texs;
+    std::vector<sf::Text> _req_texts;
+    std::string _crew_type;
     void init();
     void setupRegions();
     void updatePlanetScreen();
     void updateJobScreen();
     void updateUpgradeSelectScreen();
     void updateCargoScreen();
+    void updateCrewScreen(std::string type);
     void updateStartMenu();
     void updateStatus();
     void addButton(sf::Vector2f pos, std::string label, std::function<void()> on_click, std::string icon = "");
