@@ -1,6 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <functional>
+#include <string>
+#include <map>
+#include <sstream>
 #include "../entities/spaceship.h"
 #include "../world/region.h"
 #include "../ui/button.h"
@@ -8,12 +14,13 @@
 #include "../ui/travel-animatic.h"
 #include "../ui/message-log.h"
 #include "end-game.h"
-#include <vector>
-#include <functional>
-#include <string>
-#include <map>
-#include <sstream>
-enum class GameState { START_MENU, PLANET, TRAVEL, MINIGAME, ACTION, JOB_CENTRE, TRAVEL_SELECT, UPGRADE_SELECT, WIN, LOSE, CARGO_MENU, CREW_MINER, CREW_ENGINEER };
+
+enum class GameState { 
+    START_MENU, PLANET, TRAVEL, MINIGAME, ACTION, JOB_CENTRE, 
+    TRAVEL_SELECT, UPGRADE_SELECT, WIN, LOSE, CARGO_MENU, 
+    CREW_MINER, CREW_ENGINEER, EQUIPMENT_MENU, REFUEL, REPAIR 
+};
+
 class Game {
 private:
     sf::Texture _space_texture;
@@ -25,6 +32,7 @@ private:
     Spaceship* _ship;
     std::vector<Region*> _regions;
     GameState _state;
+    GameState _previous_state;
     std::vector<Button> _buttons;
     Minigame* _minigame;
     sf::Clock _delta_clock;
@@ -40,6 +48,8 @@ private:
     TravelAnimatic* _travel_anim;
     EndGame* _end_screen;
     Planet* _selected_planet;
+    
+    // Status UI elements
     sf::Texture _health_textures[5];
     sf::Sprite _health_sprite;
     sf::Texture _fuel_textures[5];
@@ -66,10 +76,13 @@ private:
     sf::Text _equipment_txt;
     sf::Texture _start_bg_tex;
     sf::Sprite _start_bg_spr;
+    sf::Texture _menu_bg_tex;
+    sf::Sprite _menu_bg_spr;
     std::vector<sf::Sprite> _resource_sprs;
     std::vector<sf::Texture> _resource_texs;
     std::vector<sf::Text> _req_texts;
     std::string _crew_type;
+    
     void init();
     void setupRegions();
     void updatePlanetScreen();
@@ -77,6 +90,9 @@ private:
     void updateUpgradeSelectScreen();
     void updateCargoScreen();
     void updateCrewScreen(std::string type);
+    void updateEquipmentScreen();
+    void updateRefuelScreen();
+    void updateRepairScreen();
     void updateStartMenu();
     void updateStatus();
     void addButton(sf::Vector2f pos, std::string label, std::function<void()> on_click, std::string icon = "");
@@ -84,10 +100,12 @@ private:
     void checkWinCondition();
     void handleActionComplete();
     void showMessage(std::string msg);
-    void drawStatus();
+    void drawStatus(bool full = true);
+    
 public:
     Game();
     ~Game();
     void run();
 };
+
 #endif

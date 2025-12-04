@@ -1,7 +1,9 @@
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
+
 #include <string>
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include "../crew/crew.h"
 #include "weapon.h"
 #include "shield.h"
@@ -9,7 +11,7 @@
 #include "../world/planet.h"
 #include "resource.h"
 #include "equipment.h"
-#include <SFML/Graphics.hpp>
+
 class Spaceship {
 private:
     sf::Texture _top_texture;
@@ -30,9 +32,11 @@ private:
     sf::Vector2f _position;
     sf::Vector2f _velocity;
     sf::Clock _shoot_clock;
+    
 public:
     Spaceship(std::string name);
     ~Spaceship();
+    
     void travel(Region* d_region, Planet* d_planet);
     void encounterPirates(Region* c_region);
     void encounterAsteroids(Region* c_region);
@@ -71,4 +75,5 @@ public:
     int getTotalMiningRate() const;
     int getTotalEngineeringRate() const;
 };
+
 #endif

@@ -7,6 +7,8 @@ Button::Button(sf::Vector2f pos, sf::Vector2f size, std::string label, sf::Font&
     }
     _background_sprite.setTexture(_bg_texture);
     _background_sprite.setPosition(pos);
+    if (size.x == 0) size.x = _bg_texture.getSize().x;
+    if (size.y == 0) size.y = _bg_texture.getSize().y;
     _background_sprite.setScale(size.x / static_cast<float>(_bg_texture.getSize().x), size.y / static_cast<float>(_bg_texture.getSize().y));
     _text.setFont(font);
     _text.setString(label);
@@ -17,7 +19,7 @@ Button::Button(sf::Vector2f pos, sf::Vector2f size, std::string label, sf::Font&
 }
 void Button::draw(sf::RenderWindow& window) {
     window.draw(_background_sprite);
-    window.draw(_text);
+    if (_text.getString() != "") window.draw(_text);
 }
 bool Button::handleClick(sf::Vector2f mouse_pos) {
     if (!_enabled) return false;
